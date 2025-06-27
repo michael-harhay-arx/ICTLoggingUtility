@@ -107,20 +107,55 @@ def StoreData():
 
     # Initialize connection to DB
     db_connection = sqlite3.connect(db_path)    
-    cursor = db_connection.cursor
+    csr = db_connection.cursor()
     print("Connected to database.")
 
     # Query DB
-    
+    for panel in panels:
+        
+        # Update Panels table
+        panel_query = """INSERT INTO Panels(Name, SerialNum, Date, StartTestTime, EndTestTime)
+                         VALUES (?, ?, ?, ?, ?)"""
+        panel_values = (
+            panel.name,
+            panel.serial_num,
+            panel.date,
+            panel.test_start_time,
+            panel.test_end_time
+        )
+
+        # Update Blocks table
+        panel_id_query = """SELECT INTO Blocks(PanelID, Daughterboard, Name, Status)
+                            VALUES (?, ?, ?, ?)"""
+
+        for block in panel.blocks:
+            block_query = """INSERT INTO Blocks(PanelID, Daughterboard, Name, Status)
+                            VALUES (?, ?, ?, ?)"""
+            block_values = (
+                csr.fetchall(panel_id_query)[0],
+                block.daughterboard,
+                block.name,
+                block.status
+            )
+
+
+        # Update Components table
+
+
+        csr.execute(panel_query, panel_values)
+        csr.execute(block_query, block_values)
+        csr.execute(component_query, component_values)
+
 
     # Close DB
-    cursor.commit()
-    cursor.close()
+    db_connection.commit()
+    csr.close()
+    db_connection.close()
 
 
 
 # Main
 if __name__ == "__main__":
     ParseLogs()
-    # StoreData()
+    StoreData()
 
