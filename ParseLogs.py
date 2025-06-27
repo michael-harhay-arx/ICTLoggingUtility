@@ -101,12 +101,22 @@ def ParseLogs():
 
 
 # Store log data in DB
-# def StoreData():
-#     db_path = db_dir + "\\log_db.db"
-#     print(f"Storing log data in {db_path}")
+def StoreData():
+    db_path = db_dir + "\\LogDB.db"
+    print(f"Storing log data in {db_path}")
 
-#     try:
-#         dn_connection = sqlite3.connect(db_path)
+    # Initialize connection to DB
+    db_connection = sqlite3.connect(db_path)    
+    cursor = db_connection.cursor
+    print("Connected to database.")
+
+    # Query DB
+    
+
+    # Close DB
+    cursor.commit()
+    cursor.close()
+
 
 
 # Main
