@@ -6,24 +6,19 @@ import statistics
 # ------------- Classes -------------
 
 class Panel:
-    def __init__(self, name, serial_num, date, test_start_time, test_end_time, blocks):
+    def __init__(self, name, serial_num, date, test_start_time, test_end_time, components):
         self.name = name
         self.serial_num = serial_num
         self.date = date
         self.test_start_time = test_start_time
         self.test_end_time = test_end_time
-        self.blocks = blocks
-
-class Block:
-    def __init__(self, daughterboard, name, status, components):
-        self.daughterboard = daughterboard
-        self.name = name
-        self.status = status
         self.components = components
 
 class Component:
-    def __init__(self, name, val, nom_lim, hi_lim, low_lim):
+    def __init__(self, daughterboard, name, status, val, nom_lim, hi_lim, low_lim):
+        self.daughterboard = daughterboard
         self.name = name
+        self.status = status
         self.val = val
         self.nom_lim = nom_lim
         self.hi_lim = hi_lim
@@ -47,7 +42,6 @@ def ParseLogs():
 
         log_path = logs_dir + "\\" + log
         content = ""
-        block_obj_list = []
         with open(log_path, "r") as log_file:
             content = log_file.read()
 
@@ -55,40 +49,50 @@ def ParseLogs():
         blocks = re.findall(r"(\{@BLOCK.*?)(?=\{@BLOCK|\Z)", content, re.DOTALL)
         if blocks is not None:
             for block in blocks:
-                block_obj = Block(None, None, None, None)
 
-                # Get each component within the block
-                components = re.findall(r"\{.*", block)
-                if components is not None:
+                # Get component data from block
+                lines = re.findall(r"\{.*", block)
+                if lines is not None:
                     component_obj_list = []
-                    for i, component in enumerate(components):
+
+                    for i, line in enumerate(lines):
+                        component_obj = Component(None, None, None, None, None, None, None,)
                         
                         # Tokenize line
-                        split_component = re.split(r"[|{]+", component)
-                        if len(split_component) < 7 and len(split_component) != 4:
+                        split_line = re.split(r"[|{]+", line)
+                        if len(split_line) < 7 and len(split_line) != 4: # TODO: fix hardcoding
                             break
 
                         # If first line in block, get header data (not actually a component)
                         if i == 0:
-                            block_obj.daughterboard = split_component[2].split("%")[0]
-                            block_obj.name = split_component[2].split("%")[1]
-                            block_obj.status = split_component[3]
+                            component_obj.daughterboard = split_line[2].split("%")[0]
+                            char_index = split_line[2].find("%")
+                            component_obj.name = split_line[2][char_index + 1:]
+                            component_obj.status = split_line[3]
                             
-                        # Else create component object
+                        # Else get rest of component data
                         else:
-                            if len(split_component) == 7:
-                                split_component.append(split_component[6])
-                                split_component[6] = split_component[5]
-                                split_component[5] = ''
+                            component_obj.val = split_line[3]
+                            
+                            # Get limits
+                            for j, element in enumerate(split_line):
+                                if element.startswith("@LIM"):
+                                    if element == "@LIM2":
+                                        component_obj.nom_lim = ""
+                                        component_obj.hi_lim = split_line[j+1]
+                                        component_obj.low_lim = split_line[j+2]
 
-                            component_obj = Component(split_component[1], split_component[3], split_component[5], split_component[6], split_component[7][:-2])
-                            component_obj_list.append(component_obj)
+                                    if element == "@LIM3":
+                                        component_obj.nom_lim = split_line[j+1]
+                                        component_obj.hi_lim = split_line[j+2]
+                                        component_obj.low_lim = split_line[j+3]
 
-                    # Add all components to block
-                    block_obj.components = component_obj_list
+                            # If multiple components in block
+                            if not split_line[3].startswith("@LIM"):
+                                component_obj.name.append("%" + split_line[3]) #TODO
 
-                # Append block to block list
-                block_obj_list.append(block_obj)
+
+                    component_obj_list.append(component_obj)
 
 
         # Instantiate panel object
@@ -97,7 +101,7 @@ def ParseLogs():
         start_time = header.group(2)[6:]
         end_time = header.group(4)[6:]
 
-        panel = Panel(header.group(1), header.group(3), date, start_time, end_time, block_obj_list)
+        panel = Panel(header.group(1), header.group(3), date, start_time, end_time, component_obj_list)
         panels.append(panel)
 
 
