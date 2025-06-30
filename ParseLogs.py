@@ -26,7 +26,7 @@ class Component:
         self.val = val
         self.nom_lim = nom_lim
         self.hi_lim = hi_lim
-        self.lo_lim = low_lim
+        self.low_lim = low_lim
 
 # ------------- Globals -------------
 
@@ -64,18 +64,18 @@ def ParseLogs():
                         
                         # Tokenize line
                         split_component = re.split(r"[|{]+", component)
-                        if len(split_component) < 7 and len(split_component) is not 4:
+                        if len(split_component) < 7 and len(split_component) != 4:
                             break
 
                         # If first line in block, get header data (not actually a component)
-                        if i is 0:
+                        if i == 0:
                             block_obj.daughterboard = split_component[2].split("%")[0]
                             block_obj.name = split_component[2].split("%")[1]
                             block_obj.status = split_component[3]
                             
                         # Else create component object
                         else:
-                            if len(split_component) is 7:
+                            if len(split_component) == 7:
                                 split_component.append(split_component[6])
                                 split_component[6] = split_component[5]
                                 split_component[5] = ''
@@ -123,34 +123,43 @@ def StoreData():
             panel.test_start_time,
             panel.test_end_time
         )
+        csr.execute(panel_query, panel_values)
 
         # Update Blocks table
-        panel_id_query = """SELECT INTO Blocks(PanelID, Daughterboard, Name, Status)
-                            VALUES (?, ?, ?, ?)"""
+        panel_id = csr.lastrowid
 
         for block in panel.blocks:
             block_query = """INSERT INTO Blocks(PanelID, Daughterboard, Name, Status)
-                            VALUES (?, ?, ?, ?)"""
+                             VALUES (?, ?, ?, ?)"""
             block_values = (
-                csr.fetchall(panel_id_query)[0],
+                panel_id,
                 block.daughterboard,
                 block.name,
                 block.status
             )
+            csr.execute(block_query, block_values)
 
-
-        # Update Components table
-
-
-        csr.execute(panel_query, panel_values)
-        csr.execute(block_query, block_values)
-        csr.execute(component_query, component_values)
-
+            # Update Components table
+            block_id = csr.lastrowid
+            
+            for component in block.components:
+                component_query = """INSERT INTO Components(BlockID, Name, Value, NomLimit, HiLimit, LowLimit)
+                                     VALUES (?, ?, ?, ?, ?, ?)"""
+                component_values = (
+                    block_id,
+                    component.name,
+                    component.val,
+                    component.nom_lim,
+                    component.hi_lim,
+                    component.low_lim
+                )
+                csr.execute(component_query, component_values)
 
     # Close DB
     db_connection.commit()
     csr.close()
     db_connection.close()
+    print("Successfully wrote to database.")
 
 
 
