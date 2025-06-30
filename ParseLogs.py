@@ -1,6 +1,7 @@
 import os
 import re
 import sqlite3
+import statistics
 
 # ------------- Classes -------------
 
@@ -107,7 +108,7 @@ def StoreData():
 
     # Initialize connection to DB
     db_connection = sqlite3.connect(db_path)    
-    csr = db_connection.cursor()
+    cursor = db_connection.cursor()
     print("Connected to database.")
 
     # Query DB
@@ -123,10 +124,10 @@ def StoreData():
             panel.test_start_time,
             panel.test_end_time
         )
-        csr.execute(panel_query, panel_values)
+        cursor.execute(panel_query, panel_values)
 
         # Update Blocks table
-        panel_id = csr.lastrowid
+        panel_id = cursor.lastrowid
 
         for block in panel.blocks:
             block_query = """INSERT INTO Blocks(PanelID, Daughterboard, Name, Status)
@@ -137,10 +138,10 @@ def StoreData():
                 block.name,
                 block.status
             )
-            csr.execute(block_query, block_values)
+            cursor.execute(block_query, block_values)
 
             # Update Components table
-            block_id = csr.lastrowid
+            block_id = cursor.lastrowid
             
             for component in block.components:
                 component_query = """INSERT INTO Components(BlockID, Name, Value, NomLimit, HiLimit, LowLimit)
@@ -153,18 +154,57 @@ def StoreData():
                     component.hi_lim,
                     component.low_lim
                 )
-                csr.execute(component_query, component_values)
+                cursor.execute(component_query, component_values)
 
     # Close DB
     db_connection.commit()
-    csr.close()
     db_connection.close()
-    print("Successfully wrote to database.")
+    print("Successfully wrote to raw log data database.")
 
+
+# Prep data for display
+def PrepDisplayData():
+    db_connection = sqlite3.connect(".\\Logs\\LogDB.db")
+    cursor = db_connection.cursor()
+
+    # Get all component names
+    cursor.execute("SELECT DISTINCT Name FROM Components")
+    component_names = [row[0] for row in cursor.fetchall()]
+
+    display_rows = []
+
+    for name in component_names:
+        cursor.execute("SELECT CAST(Value AS REAL) FROM Components WHERE Name = ?", (name,))
+        values = [row[0] for row in cursor.fetchall()]
+        
+        if not values:
+            continue
+        
+        lsl = float(cursor.execute("SELECT LowLimit FROM Components WHERE Name = ? LIMIT 1", (name,)).fetchone()[0])
+        usl = float(cursor.execute("SELECT HiLimit FROM Components WHERE Name = ? LIMIT 1", (name,)).fetchone()[0])
+
+        avg = statistics.mean(values)
+        median = statistics.median(values)
+        std_dev = statistics.stdev(values) if len(values) > 1 else 0
+        count = len(values)
+        min_v = min(values)
+        max_v = max(values)
+        range_v = max_v - min_v
+        cv = (std_dev / avg * 100) if avg != 0 else 0
+        cpk = min((usl - avg) / (3 * std_dev), (avg - lsl) / (3 * std_dev)) if std_dev != 0 else 0
+
+        display_rows.append((name, lsl, usl, avg, median, std_dev, max_v, min_v, range_v, cv, count, cpk))
+
+    cursor.executemany("""INSERT INTO Display (Component, LSL, USL, Average, Median, "Std Dev", Max, Min, Range, "C.V.", Count, CPK) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", display_rows)
+
+    db_connection.commit()
+    db_connection.close()
+    print("Successfully prepped data for display.")
 
 
 # Main
 if __name__ == "__main__":
     ParseLogs()
     StoreData()
-
+    PrepDisplayData()

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SQLite Viewer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+  <link rel="stylesheet" href=".\\Stylesheet.css">
+</head>
+
+<body>
+  <h1>CPK Statistics</h1>
+
+  <input type="file" id="dbfile" accept=".db,.sqlite" />
+  <select id="tableSelect" onchange="renderTable()"></select>
+  <div id="tableOutput"></div>
+
+  <script>
+    let db;
+
+    document.getElementById('dbfile').addEventListener('change', async function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const buffer = await file.arrayBuffer();
+      const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}` });
+      db = new SQL.Database(new Uint8Array(buffer));
+      
+      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table';")[0];
+      const tableSelect = document.getElementById('tableSelect');
+      tableSelect.innerHTML = '';
+
+      tables.values.forEach(([name]) => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        tableSelect.appendChild(opt);
+      });
+
+      renderTable();
+    });
+
+    function renderTable() {
+      const tableName = document.getElementById('tableSelect').value;
+      if (!tableName || !db) return;
+
+      const results = db.exec(`SELECT * FROM ${tableName}`);
+      const output = document.getElementById('tableOutput');
+      output.innerHTML = '';
+
+      if (results.length === 0) {
+        output.textContent = 'No data.';
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.border = 1;
+      const headerRow = document.createElement('tr');
+      results[0].columns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      results[0].values.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+          const td = document.createElement('td');
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+
+      output.appendChild(table);
+    }
+  </script>
+</body>
+
+</html>
