@@ -29,7 +29,6 @@ class Component:
 current_dir = os.getcwd()
 logs_dir = current_dir + "\\Logs"
 db_dir = current_dir + "\\DB"
-component_obj_list = []
 panels = []
 
 # ------------- Functions -------------
@@ -45,6 +44,8 @@ def ParseLogs():
         content = ""
         with open(log_path, "r") as log_file:
             content = log_file.read()
+
+        component_obj_list = []
 
         # Get each block
         blocks = re.findall(r"(\{@BLOCK.*?)(?=\{@BLOCK|\Z)", content, re.DOTALL)
