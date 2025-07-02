@@ -61,7 +61,7 @@ def ParseLogs():
                     for i, line in enumerate(lines):
                         
                         # Tokenize line
-                        split_line = re.split(r"[|{]+", line)
+                        split_line = re.split(r"[|{}]+", line)
 
                         # If first line in block, get component header data
                         if i == 0:
@@ -118,6 +118,10 @@ def StoreData():
     db_connection = sqlite3.connect(db_path)    
     cursor = db_connection.cursor()
     print("Connected to database.")
+
+    # Clear pre-existing data
+    cursor.execute("""DELETE FROM Panels""")
+    cursor.execute("""DELETE FROM Components""")
 
     # Query DB
     for panel in panels:
