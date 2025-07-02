@@ -162,49 +162,7 @@ def StoreData():
     print("Successfully wrote to raw log data database.")
 
 
-# Prep data for display
-def PrepDisplayData():
-    db_connection = sqlite3.connect(".\\Logs\\LogDB.db")
-    cursor = db_connection.cursor()
-
-    # Get all component names
-    cursor.execute("SELECT DISTINCT Name FROM Components")
-    component_names = [row[0] for row in cursor.fetchall()]
-
-    display_rows = []
-
-    for name in component_names:
-        cursor.execute("SELECT CAST(Value AS REAL) FROM Components WHERE Name = ?", (name,))
-        values = [row[0] for row in cursor.fetchall()]
-        
-        if not values:
-            continue
-        
-        lsl = float(cursor.execute("SELECT LowLimit FROM Components WHERE Name = ? LIMIT 1", (name,)).fetchone()[0])
-        usl = float(cursor.execute("SELECT HiLimit FROM Components WHERE Name = ? LIMIT 1", (name,)).fetchone()[0])
-
-        avg = statistics.mean(values)
-        median = statistics.median(values)
-        std_dev = statistics.stdev(values) if len(values) > 1 else 0
-        count = len(values)
-        min_v = min(values)
-        max_v = max(values)
-        range_v = max_v - min_v
-        cv = (std_dev / avg * 100) if avg != 0 else 0
-        cpk = min((usl - avg) / (3 * std_dev), (avg - lsl) / (3 * std_dev)) if std_dev != 0 else 0
-
-        display_rows.append((name, lsl, usl, avg, median, std_dev, max_v, min_v, range_v, cv, count, cpk))
-
-    cursor.executemany("""INSERT INTO Display (Component, LSL, USL, Average, Median, "Std Dev", Max, Min, Range, "C.V.", Count, CPK) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", display_rows)
-
-    db_connection.commit()
-    db_connection.close()
-    print("Successfully prepped data for display.")
-
-
 # Main
 if __name__ == "__main__":
     ParseLogs()
     StoreData()
-    #PrepDisplayData()

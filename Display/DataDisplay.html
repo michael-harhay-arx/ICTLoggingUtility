@@ -26,7 +26,7 @@
       const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}` });
       db = new SQL.Database(new Uint8Array(buffer));
       
-      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table';")[0];
+      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table' OR type='view';")[0];
       const tableSelect = document.getElementById('tableSelect');
       tableSelect.innerHTML = '';
 

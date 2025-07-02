@@ -1,7 +1,8 @@
--- Clear Display
-DELETE FROM Display
+-- Clear table
+/*
+DELETE FROM Display;
 
--- Insert values into Display
+-- Insert data into display
 INSERT INTO Display (
 	Daughterboard,
 	Component,
@@ -17,6 +18,10 @@ INSERT INTO Display (
 	NumTests,
 	CPK
 )
+*/
+
+-- Create View
+CREATE VIEW CPKView AS
 
 -- CTEs
 WITH 
@@ -37,7 +42,6 @@ StdDevTable AS (
 	GROUP BY c.Name
 ),
 
--- CTEs to calculate median
 Counts AS (
   SELECT Name, COUNT(*) AS N
   FROM Components
@@ -66,7 +70,7 @@ MedianTable AS (
   GROUP BY r.Name
 )
 
--- Main Query
+-- Main query
 SELECT
 	c.Daughterboard,
 	c.Name,
@@ -85,5 +89,5 @@ FROM Components AS c
 JOIN AvgTable AS a ON c.Name = a.Name
 JOIN StdDevTable AS s ON c.Name = s.Name
 JOIN MedianTable AS m ON c.Name = m.Name
-GROUP BY c.Name
+GROUP BY c.Daughterboard, c.Name
 ORDER BY c.Name;
