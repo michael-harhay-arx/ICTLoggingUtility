@@ -29,6 +29,7 @@ class Component:
 current_dir = os.getcwd()
 logs_dir = current_dir + "\\Logs"
 db_dir = current_dir + "\\DB"
+component_obj_list = []
 panels = []
 
 # ------------- Functions -------------
@@ -53,32 +54,36 @@ def ParseLogs():
                 # Get component data from block
                 lines = re.findall(r"\{.*", block)
                 if lines is not None:
-                    component_obj_list = []
+                    component_daughterboard = ""
+                    component_name = ""
+                    component_status = ""
 
                     for i, line in enumerate(lines):
-                        component_obj = Component(None, None, None, None, None, None, None,)
                         
                         # Tokenize line
                         split_line = re.split(r"[|{]+", line)
-                        if len(split_line) < 7 and len(split_line) != 4: # TODO: fix hardcoding
-                            break
 
-                        # If first line in block, get header data (not actually a component)
+                        # If first line in block, get component header data
                         if i == 0:
-                            component_obj.daughterboard = split_line[2].split("%")[0]
+                            component_daughterboard = split_line[2].split("%")[0]
                             char_index = split_line[2].find("%")
-                            component_obj.name = split_line[2][char_index + 1:]
-                            component_obj.status = split_line[3]
+                            component_name = split_line[2][char_index + 1:]
+                            component_status = split_line[3]
                             
-                        # Else get rest of component data
+                        # Else get rest of component data, create new component object
                         else:
-                            component_obj.val = split_line[3]
+
+                            # Check for unwanted data
+                            if split_line[3][0] != "+" and split_line[3][0] != "-":
+                                continue
+
+                            component_obj = Component(component_daughterboard, component_name, component_status, split_line[3], None, None, None)
                             
                             # Get limits
                             for j, element in enumerate(split_line):
                                 if element.startswith("@LIM"):
                                     if element == "@LIM2":
-                                        component_obj.nom_lim = ""
+                                        component_obj.nom_lim = "n/a"
                                         component_obj.hi_lim = split_line[j+1]
                                         component_obj.low_lim = split_line[j+2]
 
@@ -88,11 +93,10 @@ def ParseLogs():
                                         component_obj.low_lim = split_line[j+3]
 
                             # If multiple components in block
-                            if not split_line[3].startswith("@LIM"):
-                                component_obj.name.append("%" + split_line[3]) #TODO
+                            if not split_line[4].startswith("@LIM"):
+                                component_obj.name += "%" + split_line[4]
 
-
-                    component_obj_list.append(component_obj)
+                            component_obj_list.append(component_obj)
 
 
         # Instantiate panel object
@@ -130,35 +134,23 @@ def StoreData():
         )
         cursor.execute(panel_query, panel_values)
 
-        # Update Blocks table
+        # Update Components table
         panel_id = cursor.lastrowid
-
-        for block in panel.blocks:
-            block_query = """INSERT INTO Blocks(PanelID, Daughterboard, Name, Status)
-                             VALUES (?, ?, ?, ?)"""
-            block_values = (
+        
+        for component in panel.components:
+            component_query = """INSERT INTO Components(PanelID, Daughterboard, Name, Status, Value, NomLimit, HiLimit, LowLimit)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+            component_values = (
                 panel_id,
-                block.daughterboard,
-                block.name,
-                block.status
+                component.daughterboard,
+                component.name,
+                component.status,
+                component.val,
+                component.nom_lim,
+                component.hi_lim,
+                component.low_lim
             )
-            cursor.execute(block_query, block_values)
-
-            # Update Components table
-            block_id = cursor.lastrowid
-            
-            for component in block.components:
-                component_query = """INSERT INTO Components(BlockID, Name, Value, NomLimit, HiLimit, LowLimit)
-                                     VALUES (?, ?, ?, ?, ?, ?)"""
-                component_values = (
-                    block_id,
-                    component.name,
-                    component.val,
-                    component.nom_lim,
-                    component.hi_lim,
-                    component.low_lim
-                )
-                cursor.execute(component_query, component_values)
+            cursor.execute(component_query, component_values)
 
     # Close DB
     db_connection.commit()
@@ -211,4 +203,4 @@ def PrepDisplayData():
 if __name__ == "__main__":
     ParseLogs()
     StoreData()
-    PrepDisplayData()
+    #PrepDisplayData()
