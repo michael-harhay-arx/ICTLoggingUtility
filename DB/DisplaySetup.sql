@@ -71,5 +71,5 @@ FROM Components AS c
 LEFT JOIN AvgTable AS a ON c.Name = a.Name
 LEFT JOIN StdDevTable AS s ON c.Name = s.Name
 LEFT JOIN MedianTable AS m ON c.Name = m.Name
-GROUP BY c.Name
-ORDER BY c.Name;
+GROUP BY c.Daughterboard, c.Name
+ORDER BY c.Daughterboard, c.Name;
