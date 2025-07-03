@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-        x: { title: { display: true, text: 'Label' } },
+        x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
         y: { beginAtZero: true, title: { display: true, text: 'CPK' } }
         }
     }
@@ -284,4 +284,48 @@ function sortTableByColumn(table, colIndex, ascending) {
 
     // Re-apply daughterboard filter if needed
     filterByDaughterboard();
+}
+
+// Export to pdf
+async function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+
+  // Temporarily expand the table output to show everything
+  const tableOutput = document.getElementById('tableOutput');
+  const originalMaxHeight = tableOutput.style.maxHeight;
+  const originalOverflow = tableOutput.style.overflow;
+
+  tableOutput.style.maxHeight = 'none';
+  tableOutput.style.overflow = 'visible';
+
+  // Wait a moment for reflow
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  // Capture full content
+  const canvas = await html2canvas(document.body, {
+    scale: 2,
+    useCORS: true
+  });
+
+  // Restore original tableOutput styles
+  tableOutput.style.maxHeight = originalMaxHeight;
+  tableOutput.style.overflow = originalOverflow;
+
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'pt', 'a4');
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const imgWidth = pageWidth;
+  const imgHeight = canvas.height * imgWidth / canvas.width;
+
+  // Handle multipage PDF if content is taller than one page
+  let position = 0;
+  while (position < imgHeight) {
+    pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+    position += pageHeight;
+    if (position < imgHeight) pdf.addPage();
+  }
+
+  pdf.save('cpk_statistics.pdf');
 }
