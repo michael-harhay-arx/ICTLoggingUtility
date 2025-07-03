@@ -1,3 +1,5 @@
+// Warning: a lot of this is vibe code
+
 let db;
 let myChart;
 
