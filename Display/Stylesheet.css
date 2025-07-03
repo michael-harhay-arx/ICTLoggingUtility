@@ -3,7 +3,7 @@ html {
 }
 
 #tableOutput {
-    max-height: 50vh;
+    max-height: 82vh;
     overflow: auto;
     border: 1px solid #ccc;
     margin-top: 10px;

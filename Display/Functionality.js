@@ -24,6 +24,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     });
+    const chartWrapper = document.getElementById('chartWrapper');
+    const chartSelect = document.getElementById('daughterboardSelect')
+    if (chartWrapper) {
+        chartWrapper.style.display = 'none';
+        chartSelect.style.display = 'none';
+    }
 });
 
 
@@ -57,6 +63,19 @@ document.getElementById('dbfile').addEventListener('change', async function (eve
 function renderTable() {
     const tableName = document.getElementById('tableSelect').value;
     if (!tableName || !db) return;
+
+    const chartWrapper = document.getElementById('chartWrapper');
+    const chartSelect = document.getElementById('daughterboardSelect')
+    const tableWrapper = document.getElementById('tableOutput')
+
+    // Show chart only for "CPKView"
+    if (chartWrapper) {
+        chartWrapper.style.display = (tableName === 'CPKView') ? 'block' : 'none';
+        chartSelect.style.display = (tableName === 'CPKView') ? 'block' : 'none';
+        tableWrapper.style.maxHeight = (tableName === 'CPKView') ? '48vh' : '82vh'
+    }
+
+  if (!tableName || !db) return;
 
     let results;
     try {
