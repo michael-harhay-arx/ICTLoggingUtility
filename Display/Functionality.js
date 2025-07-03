@@ -329,3 +329,57 @@ async function exportToPDF() {
 
   pdf.save('cpk_statistics.pdf');
 }
+
+
+// Export to CSV
+function exportToCSV() {
+  if (!db) {
+    alert("No database loaded.");
+    return;
+  }
+
+  const tableName = document.getElementById('tableSelect').value;
+  if (!tableName) {
+    alert("No table selected.");
+    return;
+  }
+
+  let result;
+  try {
+    result = db.exec(`SELECT * FROM "${tableName}"`);
+  } catch (err) {
+    alert("Query error: " + err.message);
+    return;
+  }
+
+  if (!result || result.length === 0) {
+    alert("No data to export.");
+    return;
+  }
+
+  const columns = result[0].columns;
+  const values = result[0].values;
+
+  // Convert to CSV format
+  const csvRows = [];
+  csvRows.push(columns.join(',')); // header
+  values.forEach(row => {
+    const escaped = row.map(cell =>
+      `"${String(cell).replace(/"/g, '""')}"`
+    );
+    csvRows.push(escaped.join(','));
+  });
+
+  const csvContent = csvRows.join('\n');
+
+  // Create blob and download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${tableName}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
