@@ -7,135 +7,29 @@
   <meta charset="UTF-8">
   <title>SQLite Viewer</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href=".\\Stylesheet.css">
 </head>
 
 <body>
   <h1>CPK Statistics</h1>
 
+  <!-- Select which daughterboard to display on chart -->
+  <select id="daughterboardSelect" onchange="filterByDaughterboard()">
+    <option value="ALL">All Daughterboards</option>
+  </select>
+
+  <!-- Chart -->
+  <div class="chart-container">
+    <canvas id="myChart"></canvas>
+  </div>
+
   <input type="file" id="dbfile" accept=".db,.sqlite" />
   <select id="tableSelect" onchange="renderTable()"></select>
   <div id="tableOutput"></div>
 
-  <script>
-    let db;
-
-    document.getElementById('dbfile').addEventListener('change', async function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const buffer = await file.arrayBuffer();
-      const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}` });
-      db = new SQL.Database(new Uint8Array(buffer));
-      
-      const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table' OR type='view';")[0];
-      const tableSelect = document.getElementById('tableSelect');
-      tableSelect.innerHTML = '';
-
-      tables.values.forEach(([name]) => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = name;
-        tableSelect.appendChild(opt);
-      });
-
-      renderTable();
-    });
-
-    function renderTable() {
-      const tableName = document.getElementById('tableSelect').value;
-      if (!tableName || !db) return;
-
-      let results;
-      try {
-        results = db.exec(`SELECT * FROM "${tableName}"`);
-      } catch (err) {
-        document.getElementById('tableOutput').textContent = 'Query error: ' + err.message;
-        return;
-      }
-
-      const output = document.getElementById('tableOutput');
-      output.innerHTML = '';
-
-      if (!results || results.length === 0) {
-        output.textContent = 'No data.';
-        return;
-      }
-
-      const table = document.createElement('table');
-      table.border = 1;
-
-      // Create header row
-      const headerRow = document.createElement('tr');
-      results[0].columns.forEach(col => {
-        const th = document.createElement('th');
-        th.textContent = col;
-        headerRow.appendChild(th);
-      });
-      table.appendChild(headerRow);
-
-      // Create filter input row
-      const filterRow = document.createElement('tr');
-      results[0].columns.forEach((_, colIndex) => {
-        const td = document.createElement('td');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.dataset.col = colIndex;
-        input.placeholder = 'Filter...';
-        input.oninput = () => filterTable(table, results[0].columns.length);
-        td.appendChild(input);
-        filterRow.appendChild(td);
-      });
-      table.appendChild(filterRow);
-
-      // Store full data for later filtering
-      const fullData = results[0].values;
-
-      // Add data rows
-      fullData.forEach(row => {
-        const tr = document.createElement('tr');
-        row.forEach(cell => {
-          const td = document.createElement('td');
-          td.textContent = cell;
-          tr.appendChild(td);
-        });
-        table.appendChild(tr);
-      });
-
-      // Attach full data to table for filtering
-      table.fullData = fullData;
-
-      output.appendChild(table);
-    }
-
-    function filterTable(table, colCount) {
-      const filters = Array.from(table.querySelectorAll('tr:nth-child(2) input'))
-        .map(input => input.value.toLowerCase());
-
-      // Remove all rows after filter row
-      while (table.rows.length > 2) {
-        table.deleteRow(2);
-      }
-
-      // Add only matching rows
-      table.fullData.forEach(row => {
-        const matches = filters.every((filter, i) => {
-          return !filter || String(row[i]).toLowerCase().includes(filter);
-        });
-        if (matches) {
-          const tr = document.createElement('tr');
-          row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
-          });
-          table.appendChild(tr);
-        }
-      });
-    }
-
-
-  </script>
+  <!-- JS -->
+  <script src=".\\Functionality.js"></script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@ html {
 }
 
 #tableOutput {
-    max-height: 40vw;
+    max-height: 50vh;
     overflow: auto;
     border: 1px solid #ccc;
     margin-top: 10px;
@@ -45,4 +45,12 @@ tr:nth-child(2) input {
 
 tr:hover {
     background-color: #ddd;
+}
+
+.chart-container {
+    width: 95vw;
+    height: 33vh;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative
 }
