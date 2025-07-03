@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         maintainAspectRatio: false,
         scales: {
         x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
-        y: { beginAtZero: true, title: { display: true, text: 'CPK' } }
+        y: { max: 5, beginAtZero: true, title: { display: true, text: 'CPK' } }
         }
     }
     });
@@ -52,7 +52,7 @@ document.getElementById('dbfile').addEventListener('change', async function (eve
         const opt = document.createElement('option');
         opt.value = name;
         opt.textContent = name;
-        if (name != 'sqlite_sequence') {
+        if (name != 'sqlite_sequence' && name != 'Components') {
             tableSelect.appendChild(opt);
         }
     });
@@ -76,8 +76,6 @@ function renderTable() {
         chartSelect.style.display = (tableName === 'CPKView') ? 'block' : 'none';
         tableWrapper.style.maxHeight = (tableName === 'CPKView') ? '48vh' : '82vh'
     }
-
-  if (!tableName || !db) return;
 
     let results;
     try {
@@ -309,98 +307,100 @@ function sortTableByColumn(table, colIndex, ascending) {
 
 // Export to pdf
 async function exportToPDF() {
-  const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;
 
-  // Temporarily expand the table output to show everything
-  const tableOutput = document.getElementById('tableOutput');
-  const originalMaxHeight = tableOutput.style.maxHeight;
-  const originalOverflow = tableOutput.style.overflow;
+    // Temporarily expand the table output to show everything
+    const tableOutput = document.getElementById('tableOutput');
+    const originalMaxHeight = tableOutput.style.maxHeight;
+    const originalOverflow = tableOutput.style.overflow;
 
-  tableOutput.style.maxHeight = 'none';
-  tableOutput.style.overflow = 'visible';
+    tableOutput.style.maxHeight = 'none';
+    tableOutput.style.overflow = 'visible';
 
-  // Wait a moment for reflow
-  await new Promise(resolve => setTimeout(resolve, 200));
+    // Wait a moment for reflow
+    await new Promise(resolve => setTimeout(resolve, 200));
 
-  // Capture full content
-  const canvas = await html2canvas(document.body, {
-    scale: 2,
-    useCORS: true
-  });
+    // Capture full content
+    const canvas = await html2canvas(document.body, {
+        scale: 2,
+        useCORS: true
+    });
 
-  // Restore original tableOutput styles
-  tableOutput.style.maxHeight = originalMaxHeight;
-  tableOutput.style.overflow = originalOverflow;
+    // Restore original tableOutput styles
+    tableOutput.style.maxHeight = originalMaxHeight;
+    tableOutput.style.overflow = originalOverflow;
 
-  const imgData = canvas.toDataURL('image/png');
-  const pdf = new jsPDF('p', 'pt', 'a4');
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'pt', 'a4');
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth;
-  const imgHeight = canvas.height * imgWidth / canvas.width;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
 
-  // Handle multipage PDF if content is taller than one page
-  let position = 0;
-  while (position < imgHeight) {
-    pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
-    position += pageHeight;
-    if (position < imgHeight) pdf.addPage();
-  }
+    // Handle multipage PDF if content is taller than one page
+    let position = 0;
+    while (position < imgHeight) {
+        pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+        position += pageHeight;
+        if (position < imgHeight) pdf.addPage();
+    }
 
-  pdf.save('cpk_statistics.pdf');
+    pdf.save('cpk_statistics.pdf');
 }
 
 
 // Export to CSV
 function exportToCSV() {
-  if (!db) {
-    alert("No database loaded.");
-    return;
-  }
+    if (!db) {
+        alert("No database loaded.");
+        return;
+    }
 
-  const tableName = document.getElementById('tableSelect').value;
-  if (!tableName) {
-    alert("No table selected.");
-    return;
-  }
+    const tableName = document.getElementById('tableSelect').value;
+    if (!tableName) {
+        alert("No table selected.");
+        return;
+    }
 
-  let result;
-  try {
-    result = db.exec(`SELECT * FROM "${tableName}"`);
-  } catch (err) {
-    alert("Query error: " + err.message);
-    return;
-  }
+    let result;
+    try {
+        result = db.exec(`SELECT * FROM "${tableName}"`);
+    } 
+    
+    catch (err) {
+        alert("Query error: " + err.message);
+        return;
+    }
 
-  if (!result || result.length === 0) {
-    alert("No data to export.");
-    return;
-  }
+    if (!result || result.length === 0) {
+        alert("No data to export.");
+        return;
+    }
 
-  const columns = result[0].columns;
-  const values = result[0].values;
+    const columns = result[0].columns;
+    const values = result[0].values;
 
-  // Convert to CSV format
-  const csvRows = [];
-  csvRows.push(columns.join(',')); // header
-  values.forEach(row => {
-    const escaped = row.map(cell =>
-      `"${String(cell).replace(/"/g, '""')}"`
-    );
-    csvRows.push(escaped.join(','));
-  });
+    // Convert to CSV format
+    const csvRows = [];
+    csvRows.push(columns.join(',')); // header
+    values.forEach(row => {
+        const escaped = row.map(cell =>
+            `"${String(cell).replace(/"/g, '""')}"`
+        );
+        csvRows.push(escaped.join(','));
+    });
 
-  const csvContent = csvRows.join('\n');
+    const csvContent = csvRows.join('\n');
 
-  // Create blob and download
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${tableName}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${tableName}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 

@@ -1,5 +1,6 @@
 html {
     font-family: Arial, sans-serif;
+    margin: 10px;
 }
 
 #tableOutput {
@@ -56,22 +57,34 @@ tr:hover {
 }
 
 .top-bar {
+    width: 99vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.right-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 10px;
+  gap: 12px;
 }
 
 .export-btn {
-  padding: 6px 12px;
-  font-size: 0.9em;
-  background-color: #4b4b4b;
-  color: white;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    background-color: #4b4b4b;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
 }
 
 .export-btn:hover {
-  background-color: #7a7a7a;
+    background-color: #7a7a7a;
+}
+
+.logo {
+    width: 15vw;
+    display: block;
 }
