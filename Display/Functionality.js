@@ -208,20 +208,43 @@ function renderTable() {
 // Adds filtering functionality to table
 function filterTable(table, colCount) {
     const filters = Array.from(table.querySelectorAll('tr:nth-child(2) input'))
-    .map(input => input.value.toLowerCase());
+        .map(input => input.value.trim().toLowerCase());
 
     // Remove all rows after filter row
     while (table.rows.length > 2) {
         table.deleteRow(2);
     }
 
+    const filteredRows = [];
+
     // Add only matching rows
     table.fullData.forEach(row => {
         const matches = filters.every((filter, i) => {
-            return !filter || String(row[i]).toLowerCase().includes(filter);
+            if (!filter) return true;
+
+            const cellValue = row[i];
+            const cellStr = String(cellValue).toLowerCase();
+
+            if (i === 1) {
+                // Column index 1: always use substring match
+                return cellStr.includes(filter);
+            }
+
+            const numValue = parseFloat(cellValue);
+            if (filter.startsWith('>') || filter.startsWith('<')) {
+                const cmpValue = parseFloat(filter.slice(1).trim());
+                if (isNaN(cmpValue) || isNaN(numValue)) return false;
+
+                return filter.startsWith('>') ? numValue > cmpValue : numValue < cmpValue;
+            }
+
+            // Default: exact match or substring
+            return cellStr.includes(filter);
         });
 
         if (matches) {
+            filteredRows.push(row);
+
             const tr = document.createElement('tr');
 
             const cpkValue = parseFloat(row[12]);
@@ -238,7 +261,17 @@ function filterTable(table, colCount) {
             table.appendChild(tr);
         }
     });
+
+    // Update chart based on filtered rows
+    if (myChart && filteredRows.length > 0) {
+        const labels = filteredRows.map(r => String(r[1]));
+        const values = filteredRows.map(r => parseFloat(r[12]));
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = values;
+        myChart.update();
+    }
 }
+
 
 
 // Filter chart by selected daughterboard
