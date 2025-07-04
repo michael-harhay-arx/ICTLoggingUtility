@@ -3,6 +3,7 @@ html {
     margin: 10px;
 }
 
+/* Main data table */
 #tableOutput {
     max-height: 82vh;
     overflow: auto;
@@ -48,6 +49,12 @@ tr:hover {
     background-color: #ddd;
 }
 
+.cpk-low {
+    background-color: rgba(248, 29, 0, 0.5) !important;
+}
+
+
+/* Chart */
 .chart-container {
     width: 95vw;
     height: 30vh;
@@ -56,6 +63,7 @@ tr:hover {
     position: relative
 }
 
+/* Top bar */
 .top-bar {
     width: 99vw;
     margin: 0 auto;

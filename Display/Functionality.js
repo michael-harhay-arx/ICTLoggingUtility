@@ -2,6 +2,7 @@
 
 let db;
 let myChart;
+let cpkCutoff = 4;
 
 
 // Render chart
@@ -12,20 +13,33 @@ document.addEventListener("DOMContentLoaded", function () {
     data: {
         labels: [],
         datasets: [{
-        label: 'CPK',
-        data: [],
-        backgroundColor: 'rgba(0, 102, 204, 0.6)'
+            label: 'CPK',
+            data: [],
+
+            // Dynamically change colour of bars depending on whether they meet CPK requirements
+            backgroundColor: function(context) {
+                const value = context.dataset.data[context.dataIndex];
+                return value >= cpkCutoff 
+                    ? 'rgba(0, 102, 204, 0.7)' 
+                    : 'rgba(248, 29, 0, 0.6)';
+            }
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-        x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
-        y: { max: 5, beginAtZero: true, title: { display: true, text: 'CPK' } }
+            x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
+            y: { max: 5, beginAtZero: true, title: { display: true, text: 'CPK' } }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
         }
     }
     });
+
     const chartWrapper = document.getElementById('chartWrapper');
     const chartSelect = document.getElementById('daughterboardSelect')
     if (chartWrapper) {
@@ -158,6 +172,13 @@ function renderTable() {
 
     fullData.forEach(row => {
         const tr = document.createElement('tr');
+
+        // Dynamically change colour of cells depending on whether they meet CPK requirements
+        const cpkValue = parseFloat(row[12]);
+        if (!isNaN(cpkValue) && cpkValue < cpkCutoff) {
+            tr.classList.add('cpk-low');
+        }
+
         row.forEach(cell => {
             const td = document.createElement('td');
             td.textContent = cell;
@@ -202,11 +223,18 @@ function filterTable(table, colCount) {
 
         if (matches) {
             const tr = document.createElement('tr');
+
+            const cpkValue = parseFloat(row[12]);
+            if (!isNaN(cpkValue) && cpkValue < 4) {
+                tr.classList.add('cpk-low');
+            }
+
             row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
             });
+
             table.appendChild(tr);
         }
     });
@@ -291,13 +319,21 @@ function sortTableByColumn(table, colIndex, ascending) {
 
     dataRows.forEach(row => {
         const tr = document.createElement('tr');
+
+        const cpkValue = parseFloat(row[12]);
+        if (!isNaN(cpkValue) && cpkValue < 4) {
+            tr.classList.add('cpk-low');
+        }
+
         row.forEach(cell => {
             const td = document.createElement('td');
             td.textContent = cell;
             tr.appendChild(td);
         });
+
         table.appendChild(tr);
     });
+
 
     table.fullData = dataRows;
 
