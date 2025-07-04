@@ -1,59 +1,16 @@
 // Warning: a lot of this is vibe code
 
+const LABEL_INDEX = 1;
+const CPK_INDEX = 12;
+
 let db;
 let myChart;
 let currentSortColumn = null;
 let currentSortAscending = true;
-
-// CPK Cutoff - change as desired
-let cpkCutoff = 4;
+let cpkCutoff = 4; // CPK Cutoff - change as desired
 
 
-// Render chart
-document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById('myChart').getContext('2d');
-    myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [],
-        datasets: [{
-            label: 'CPK',
-            data: [],
-
-            // Dynamically change colour of bars depending on whether they meet CPK requirements
-            backgroundColor: function(context) {
-                const value = context.dataset.data[context.dataIndex];
-                return value >= cpkCutoff 
-                    ? 'rgba(0, 102, 204, 0.7)' 
-                    : 'rgba(248, 29, 0, 0.6)';
-            }
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
-            y: { max: 5, beginAtZero: true, title: { display: true, text: 'CPK' } }
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        }
-    }
-    });
-
-    const chartWrapper = document.getElementById('chartWrapper');
-    const chartSelect = document.getElementById('daughterboardSelect')
-    if (chartWrapper) {
-        chartWrapper.style.display = 'none';
-        chartSelect.style.display = 'none';
-    }
-});
-
-
-// Get DB data
+// Get data and render table any time DB changes
 document.getElementById('dbfile').addEventListener('change', async function (event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -79,43 +36,39 @@ document.getElementById('dbfile').addEventListener('change', async function (eve
 });
 
 
-// Render the table
+// Render the table (and chart if conditions are met)
 function renderTable() {
     const tableName = document.getElementById('tableSelect').value;
     if (!tableName || !db) return;
 
     const chartWrapper = document.getElementById('chartWrapper');
-    // const chartSelect = document.getElementById('daughterboardSelect')
     const tableWrapper = document.getElementById('tableOutput')
-
     currentSortAscending = true;
     currentSortColumn = null;
 
     // Show chart only for "CPKView"
     if (chartWrapper) {
         chartWrapper.style.display = (tableName === 'CPKView') ? 'block' : 'none';
-        // chartSelect.style.display = (tableName === 'CPKView') ? 'block' : 'none';
         tableWrapper.style.maxHeight = (tableName === 'CPKView') ? '48vh' : '82vh'
     }
 
+    // Get data table data 
     let results;
     try {
         results = db.exec(`SELECT * FROM "${tableName}"`);
     } 
-    
     catch (err) {
         document.getElementById('tableOutput').textContent = 'Query error: ' + err.message;
         return;
     }
-
     const output = document.getElementById('tableOutput');
     output.innerHTML = '';
-
     if (!results || results.length === 0) {
         output.textContent = 'No data.';
         return;
     }
 
+    // Create table
     const table = document.createElement('table');
     table.border = 1;
 
@@ -126,8 +79,6 @@ function renderTable() {
         th.textContent = col;
         th.style.cursor = 'pointer';
 
-        let ascending = true;
-
         th.addEventListener('click', () => {
             // Clear arrows from all headers first
             headerRow.querySelectorAll('th').forEach(header => {
@@ -137,7 +88,8 @@ function renderTable() {
             // Toggle sort direction if same column, else default to ascending
             if (currentSortColumn === colIndex) {
                 currentSortAscending = !currentSortAscending;
-            } else {
+            } 
+            else {
                 currentSortColumn = colIndex;
                 currentSortAscending = true;
             }
@@ -148,7 +100,6 @@ function renderTable() {
             // Sort with current sort state
             sortTableByColumn(table, currentSortColumn, currentSortAscending);
         });
-
 
         headerRow.appendChild(th);
     });
@@ -163,7 +114,7 @@ function renderTable() {
         input.type = 'text';
         input.dataset.col = colIndex;
         input.placeholder = 'Filter...';
-        input.oninput = () => filterTable(table, results[0].columns.length);
+        input.oninput = () => filterTable(table);
         td.appendChild(input);
         filterRow.appendChild(td);
     });
@@ -173,36 +124,8 @@ function renderTable() {
     const fullData = results[0].values;
     table.fullData = fullData;
 
-    /*
-    const daughterboardIndex = results[0].columns.findIndex(c => c.toLowerCase() === 'daughterboard');
-    const daughterboardSelect = document.getElementById('daughterboardSelect');
-    if (daughterboardIndex !== -1 && daughterboardSelect) {
-        const uniqueDbs = [...new Set(fullData.map(row => row[daughterboardIndex]))];
-        daughterboardSelect.innerHTML = '<option value="ALL">All Daughterboards</option>';
-        uniqueDbs.forEach(db => {
-            const opt = document.createElement('option');
-            opt.value = db;
-            opt.textContent = db;
-            daughterboardSelect.appendChild(opt);
-        });
-    }
-    */
-
     fullData.forEach(row => {
-        const tr = document.createElement('tr');
-
-        // Dynamically change colour of cells depending on whether they meet CPK requirements
-        const cpkValue = parseFloat(row[12]);
-        if (!isNaN(cpkValue) && cpkValue < cpkCutoff) {
-            tr.classList.add('cpk-low');
-        }
-
-        row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
-        });
-        table.appendChild(tr);
+        table.appendChild(createTableRow(row));
     });
 
     output.appendChild(table);
@@ -211,8 +134,8 @@ function renderTable() {
     const labels = [];
     const values = [];
     fullData.forEach(row => {
-        labels.push(String(row[1])); // x-axis
-        values.push(parseFloat(row[12])); // y-axis
+        labels.push(String(row[LABEL_INDEX])); // x-axis
+        values.push(parseFloat(row[CPK_INDEX])); // y-axis
     });
 
     if (myChart) {
@@ -223,8 +146,52 @@ function renderTable() {
 }
 
 
+// Render the chart
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    
+    // Instantiate chart
+    myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+
+                // Dynamically change colour of bars depending on whether they meet CPK requirements
+                backgroundColor: function(context) {
+                    const value = context.dataset.data[context.dataIndex];
+                    return value >= cpkCutoff 
+                        ? 'rgba(0, 102, 204, 0.7)' 
+                        : 'rgba(248, 29, 0, 0.6)';
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { title: { display: true, text: 'Label' } , ticks: { font: { size: 10 } }},
+                y: { max: 5, beginAtZero: true, title: { display: true, text: 'CPK' } }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Initially hide chart
+    const chartWrapper = document.getElementById('chartWrapper');
+    if (chartWrapper) {
+        chartWrapper.style.display = 'none';
+    }
+});
+
+
 // Adds filtering functionality to table
-function filterTable(table, colCount) {
+function filterTable(table) {
     const filters = Array.from(table.querySelectorAll('tr:nth-child(2) input'))
         .map(input => input.value.trim().toLowerCase());
 
@@ -243,40 +210,21 @@ function filterTable(table, colCount) {
             const cellValue = row[i];
             const cellStr = String(cellValue).toLowerCase();
 
-            if (i === 1) {
-                // Column index 1: always use substring match
-                return cellStr.includes(filter);
-            }
+            if (i === 1) return cellStr.includes(filter);
 
             const numValue = parseFloat(cellValue);
             if (filter.startsWith('>') || filter.startsWith('<')) {
                 const cmpValue = parseFloat(filter.slice(1).trim());
                 if (isNaN(cmpValue) || isNaN(numValue)) return false;
-
                 return filter.startsWith('>') ? numValue > cmpValue : numValue < cmpValue;
             }
 
-            // Default: exact match or substring
             return cellStr.includes(filter);
         });
 
         if (matches) {
             filteredRows.push(row);
-
-            const tr = document.createElement('tr');
-
-            const cpkValue = parseFloat(row[12]);
-            if (!isNaN(cpkValue) && cpkValue < 4) {
-                tr.classList.add('cpk-low');
-            }
-
-            row.forEach(cell => {
-                const td = document.createElement('td');
-                td.textContent = cell;
-                tr.appendChild(td);
-            });
-
-            table.appendChild(tr);
+            table.appendChild(createTableRow(row));
         }
     });
 
@@ -293,7 +241,8 @@ function filterTable(table, colCount) {
 
             if (isNumeric) {
                 return currentSortAscending ? numA - numB : numB - numA;
-            } else {
+            } 
+            else {
                 return currentSortAscending
                     ? String(valA).localeCompare(String(valB))
                     : String(valB).localeCompare(String(valA));
@@ -308,20 +257,7 @@ function filterTable(table, colCount) {
 
     // Render filtered + sorted rows
     filteredRows.forEach(row => {
-        const tr = document.createElement('tr');
-
-        const cpkValue = parseFloat(row[12]);
-        if (!isNaN(cpkValue) && cpkValue < cpkCutoff) {
-            tr.classList.add('cpk-low');
-        }
-
-        row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
-        });
-
-        table.appendChild(tr);
+        table.appendChild(createTableRow(row));
     });
 
     // Update chart based on filtered rows
@@ -334,57 +270,6 @@ function filterTable(table, colCount) {
     }
 
 }
-
-
-/*
-// Filter chart by selected daughterboard
-function filterByDaughterboard() {
-    const selected = document.getElementById('daughterboardSelect').value;
-    const table = document.querySelector('#tableOutput table');
-    const headerCells = table.querySelectorAll('tr:first-child th');
-
-    let daughterboardIndex = -1;
-    let xIndex = 1;   // assuming column 1 is for labels
-    let yIndex = 12;  // assuming column 12 is for chart data
-
-    headerCells.forEach((th, i) => {
-        const name = th.textContent.toLowerCase();
-        if (name === 'daughterboard') daughterboardIndex = i;
-        if (i === 1) xIndex = i;
-        if (i === 12) yIndex = i;
-    });
-
-    if (daughterboardIndex === -1) return;
-
-    const rows = table.querySelectorAll('tr');
-    const newLabels = [];
-    const newValues = [];
-
-    for (let i = 2; i < rows.length; i++) {
-        const cells = rows[i].children;
-        const cellText = cells[daughterboardIndex].textContent;
-
-        const show = (selected === "ALL" || cellText === selected);
-        rows[i].style.display = show ? '' : 'none';
-
-        if (show) {
-            const x = cells[xIndex].textContent;
-            const y = parseFloat(cells[yIndex].textContent);
-            if (!isNaN(y)) {
-            newLabels.push(x);
-            newValues.push(y);
-            }
-        }
-    }
-
-    // Update the chart
-    if (myChart) {
-        myChart.data.labels = newLabels;
-        myChart.data.datasets[0].data = newValues;
-        myChart.update();
-    }
-}
-*/
 
 
 // Sort Table
@@ -402,7 +287,6 @@ function sortTableByColumn(table, colIndex, ascending) {
             const cellStr = String(cellValue).toLowerCase();
 
             if (i === 1) {
-                // Column index 1: substring match
                 return cellStr.includes(filter);
             }
 
@@ -410,7 +294,6 @@ function sortTableByColumn(table, colIndex, ascending) {
             if (filter.startsWith('>') || filter.startsWith('<')) {
                 const cmpValue = parseFloat(filter.slice(1).trim());
                 if (isNaN(cmpValue) || isNaN(numValue)) return false;
-
                 return filter.startsWith('>') ? numValue > cmpValue : numValue < cmpValue;
             }
 
@@ -444,20 +327,7 @@ function sortTableByColumn(table, colIndex, ascending) {
 
     // Render filtered + sorted rows
     filteredRows.forEach(row => {
-        const tr = document.createElement('tr');
-
-        const cpkValue = parseFloat(row[12]);
-        if (!isNaN(cpkValue) && cpkValue < cpkCutoff) {
-            tr.classList.add('cpk-low');
-        }
-
-        row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
-        });
-
-        table.appendChild(tr);
+        table.appendChild(createTableRow(row));
     });
 
     // Update chart based on filtered & sorted rows
@@ -468,6 +338,24 @@ function sortTableByColumn(table, colIndex, ascending) {
         myChart.data.datasets[0].data = values;
         myChart.update();
     }
+}
+
+
+// Create table row
+function createTableRow(row) {
+    const tr = document.createElement('tr');
+    const cpkValue = parseFloat(row[CPK_INDEX]);
+    if (!isNaN(cpkValue) && cpkValue < cpkCutoff) {
+        tr.classList.add('cpk-low');
+    }
+
+    row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        tr.appendChild(td);
+    });
+
+    return tr;
 }
 
 
