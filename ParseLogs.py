@@ -121,41 +121,57 @@ def StoreData():
     print("Connected to database.")
 
     # Clear pre-existing data
-    cursor.execute("""DELETE FROM Panels""")
-    cursor.execute("""DELETE FROM Components""")
+    cursor.execute("""DELETE FROM PanelTypes""")
+    cursor.execute("""DELETE FROM PanelInstances""")
+    cursor.execute("""DELETE FROM ComponentTypes""")
+    cursor.execute("""DELETE FROM TestInstances""")
 
     # Query DB
     for panel in panels:
         
-        # Update Panels table
-        panel_query = """INSERT INTO Panels(Name, SerialNum, Date, StartTestTime, EndTestTime)
-                         VALUES (?, ?, ?, ?, ?)"""
-        panel_values = (
-            panel.name,
+        # Update PanelTypes table
+        panel_types_query = """INSERT INTO PanelTypes(Name) VALUES (?)"""
+        panel_types_values = (panel.name,)
+        cursor.execute(panel_types_query, panel_types_values)
+
+        # Update PanelInstances table
+        fk_panel_types = cursor.lastrowid
+        panel_instances_query = """INSERT INTO PanelInstances(FK_PanelTypes, SerialNum, Date, StartTestTime, EndTestTime)
+                                   VALUES (?, ?, ?, ?, ?)"""
+        panel_instances_values = (
+            fk_panel_types,
             panel.serial_num,
             panel.date,
             panel.test_start_time,
-            panel.test_end_time
+            panel.test_end_time,
         )
-        cursor.execute(panel_query, panel_values)
+        cursor.execute(panel_instances_query, panel_instances_values)
 
-        # Update Components table
-        panel_id = cursor.lastrowid
-        
+        # Update ComponentTypes table
         for component in panel.components:
-            component_query = """INSERT INTO Components(PanelID, Daughterboard, Name, Status, Value, NomLimit, HiLimit, LowLimit)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-            component_values = (
-                panel_id,
-                component.daughterboard,
+            component_types_query = """INSERT INTO ComponentTypes(FK_PanelTypes, Name, NomLimit, HiLimit, LowLimit)
+                                       VALUES (?, ?, ?, ?, ?)"""
+            component_types_values = (
+                fk_panel_types,
                 component.name,
-                component.status,
-                component.val,
                 component.nom_lim,
                 component.hi_lim,
-                component.low_lim
+                component.low_lim,
             )
-            cursor.execute(component_query, component_values)
+            cursor.execute(component_types_query, component_types_values)
+        
+            # Update TestInstances table
+            fk_component_types = cursor.lastrowid
+            test_instances_query = """INSERT INTO TestInstances(FK_ComponentTypes, Daughterboard, Status, Value)
+                                      VALUES (?, ?, ?, ?)"""
+            test_instances_values = (
+                fk_component_types,
+                component.daughterboard,
+                component.status,
+                component.val,
+            )
+
+            cursor.execute(test_instances_query, test_instances_values)
 
     # Close DB
     db_connection.commit()
