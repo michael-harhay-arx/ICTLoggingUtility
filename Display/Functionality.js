@@ -156,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         data: {
             labels: [],
             datasets: [{
+                hoverBackgroundColor: 'rgba(133, 133, 133, 0.6)',
                 data: [],
 
                 // Dynamically change colour of bars depending on whether they meet CPK requirements
