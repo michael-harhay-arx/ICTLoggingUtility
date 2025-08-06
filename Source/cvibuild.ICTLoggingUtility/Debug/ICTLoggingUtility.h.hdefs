@@ -1,0 +1,8 @@
+[ICTLoggingUtility_CheckVersionCompatibility]
+Class="Function"
+Prototype="int ICTLoggingUtility_CheckVersionCompatibility(const int ExpectedVersionMajor, const int ExpectedVersionMinor, int *VersionMajor, int *VersionMinor);"
+
+[Initialize_ICTLoggingUtility]
+Class="Function"
+Prototype="int Initialize_ICTLoggingUtility(char errmsg[1024]);"
+

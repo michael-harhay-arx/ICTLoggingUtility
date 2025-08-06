@@ -1,0 +1,76 @@
+CCFLAGS = -g ;
+HDRS = 	"C:\\Users\\Public\\Documents\\National Instruments\\TestStand 2017 (32-bit)\\AdapterSupport\\CVI"
+	"C:\\Program Files (x86)\\National Instruments\\TestStand 2017\\API\\DLLInterfaces"
+	"C:\\Arxtron\\Libraries"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\instr\\TestStand\\API"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\activex\\word"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\activex\\excel"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\custctrl"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\custctrl\\custsupp"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\cvirtsup"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\datasock"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\daqUtil"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\printing"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\toolbox"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\reportgen"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\toolslib\\localui"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\instr"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\toolslib\\custctrl"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\toolslib\\custctrl\\custsupp"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\instr"
+	"C:\\ProgramData\\National Instruments\\CVI2019\\instr"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\include"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\include"
+	"C:\\ProgramData\\National Instruments\\CVI2019\\include"
+	"C:\\ProgramData\\National Instruments\\CVI\\include"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\include\\ansi"
+	"c:\\program files (x86)\\national instruments\\cvi2019\\include\\clang\\3.3"
+	"C:\\Program Files (x86)\\IVI Foundation\\IVI\\Include"
+	"C:\\Program Files (x86)\\IVI Foundation\\VISA\\winnt\\include"
+	"C:\\Program Files (x86)\\National Instruments\\Shared\\MSDTRedistributables\\SDKHeaderFiles\\8.1"
+	"c:\\Program Files (x86)\\National Instruments\\CVI2019\\bin"
+	"c:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\Bin"
+	;
+include Jamfile_instr ;
+LOCATE on "Callbacks.c" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "Callbacks.h" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "dllmain.c" = "c:\\Arxtron\\Libraries" ;
+LOCATE on "ICTLoggingUtility.c" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "ICTLoggingUtility.h" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "ICTLoggingUtility_Definitions.h" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "ICTLoggingUtility_Extended_Documentation.c" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "main.c" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "Panel.h" = "c:\\Arxtron\\RD25XXX_ICT\\Source" ;
+LOCATE on "TemplateLIB_Include.h" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\TemplateInclude" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\Callbacks.c" ;
+FILENUM on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj" = 1 ;
+DEFPROTS on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj.cvidefprots" ;
+OUTFILE on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj.out" ;
+PrjObjects += "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\Callbacks.obj" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj" : "c:\\Arxtron\\Libraries\\dllmain.c" ;
+FILENUM on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj" = 2 ;
+DEFPROTS on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj.cvidefprots" ;
+OUTFILE on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj.out" ;
+PrjObjects += "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\dllmain.obj" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\ICTLoggingUtility.c" ;
+FILENUM on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj" = 3 ;
+DEFPROTS on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj.cvidefprots" ;
+OUTFILE on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj.out" ;
+PrjObjects += "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.obj" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\ICTLoggingUtility_Extended_Documentation.c" ;
+FILENUM on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj" = 4 ;
+DEFPROTS on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj.cvidefprots" ;
+OUTFILE on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj.out" ;
+PrjObjects += "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility_Extended_Documentation.obj" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\main.c" ;
+FILENUM on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj" = 5 ;
+DEFPROTS on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj.cvidefprots" ;
+OUTFILE on "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj" = "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj.out" ;
+PrjObjects += "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\main.obj" ;
+Object "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\resources.res" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\resources.in.rc" ;
+Depends "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\resources.res" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\manifest.xml" ;
+MainFromObjects "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.exe" : $(PrjObjects) $(InstrObjects) ;
+Depends "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.exe" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\link_options.txt" ;
+Depends "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.exe" : "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\resources.res" ;
+Depends "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\resources.res" :  "c:\\Arxtron\\RD25XXX_ICT\\Source\\Panel.uir" ;
+Depends all : "c:\\Arxtron\\RD25XXX_ICT\\Source\\cvibuild.ICTLoggingUtility\\Debug\\ICTLoggingUtility.exe" ;

@@ -1,0 +1,9 @@
+-inrc c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\resources.in.rc
+-outrc c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\resources.out.rc
+-inhdef c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility.h.hdefs
+-outdef c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility.dll.defs
+-indefprot c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\dllmain.obj.cvidefprots
+-indefprot c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility.obj.cvidefprots
+-indefprot c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility_Extended_Documentation.obj.cvidefprots
+-dllName ICTLoggingUtility.dll
+-addNITypeInfo 

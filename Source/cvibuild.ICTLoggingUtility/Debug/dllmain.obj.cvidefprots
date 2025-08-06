@@ -1,0 +1,20 @@
+[DllMain]
+Class="Function"
+Prototype="int DllMain(struct HINSTANCE__ *hinstDLL, unsigned long fdwReason, void *lpvReserved);"
+SourceLocation="c:\Arxtron\Libraries\dllmain.c:38:1"
+
+[DllEntryPoint]
+Class="Function"
+Prototype="int DllEntryPoint(struct HINSTANCE__ *hinstDLL, unsigned long fdwReason, void *lpvReserved);"
+SourceLocation="c:\Arxtron\Libraries\dllmain.c:53:1"
+
+[GetStandardErrMsg]
+Class="Function"
+Prototype="void GetStandardErrMsg(int error, char errmsg[1024]);"
+SourceLocation="c:\Arxtron\Libraries\dllmain.c:63:1"
+
+[ICTLoggingUtility_CheckVersionCompatibility]
+Class="Function"
+Prototype="int ICTLoggingUtility_CheckVersionCompatibility(const int ExpectedVersionMajor, const int ExpectedVersionMinor, int *VersionMajor, int *VersionMinor);"
+SourceLocation="c:\Arxtron\Libraries\dllmain.c:113:1 <Spelling=c:\Arxtron\RD25XXX_ICT\Source\TemplateInclude\TemplateLIB_Include.h:24:18>"
+

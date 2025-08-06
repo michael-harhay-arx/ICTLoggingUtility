@@ -1,0 +1,20 @@
+[Initialize_ICTLoggingUtility]
+Class="Function"
+Prototype="int Initialize_ICTLoggingUtility(char errmsg[1024]);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\ICTLoggingUtility.c:84:1"
+
+[Lib_Fn]
+Class="Function"
+Prototype="int Lib_Fn(const int *a, const long long *b, const float *c, double *d, short *e, char *f, char errmsg[1024]);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\ICTLoggingUtility.c:121:1"
+
+[Lib_Fn2]
+Class="Function"
+Prototype="int Lib_Fn2(char errmsg[1024]);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\ICTLoggingUtility.c:136:1"
+
+[GetLibErrMsg]
+Class="Function"
+Prototype="void GetLibErrMsg(int error, char errmsg[1024]);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\ICTLoggingUtility.c:157:1"
+

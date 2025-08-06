@@ -1,0 +1,46 @@
+-nologo
+-out:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility.exe
+-arch:x86
+-timestamp
+-debug:2
+-loadextmod
+-project:c:\Arxtron\RD25XXX_ICT\Source\ICTLoggingUtility.prj
+-res:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\resources.res
+-entry:_CVIWinMainStartupCodeForDebugging@0
+-base:0x400000
+-linked:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\linkersummary.txt
+-dlldeps:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\dlldependencies.txt
+-licensing:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\linkerlicensing.txt
+-browsedeps:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\moduledependencies.txt
+-stackreserve:1048576
+-stackcommit:4096
+-in:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\Callbacks.obj
+-in:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\dllmain.obj
+-in:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility.obj
+-in:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\ICTLoggingUtility_Extended_Documentation.obj
+-in:c:\Arxtron\RD25XXX_ICT\Source\cvibuild.ICTLoggingUtility\Debug\main.obj
+-more:c:\program files (x86)\national instruments\cvi2019\bin\msvc\cvistart.lib
+-more:c:\program files (x86)\national instruments\cvi2019\bin\msvc\cvi.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\advanlys.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\advapi32.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\bufferoverflowu.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cviauto.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cvidotnet.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cvinetstreams.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cvinetv.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cvintwrk.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\cvitdms.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\gdi32.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\gpib.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\kernel32.lib
+-more:c:\Program Files (x86)\National Instruments\Shared\CVI\Bin\msvc\NIDAQmx.lib
+-more:c:\Program Files (x86)\National Instruments\Shared\CVI\Bin\msvc\nisyscfg.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\nivxi.lib
+-more:c:\Program Files (x86)\National Instruments\Shared\CVI\Bin\msvc\nixnet.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\bin\msvc\omp.lib
+-more:c:\Arxtron\Libraries\SystemLog_LIB.lib
+-more:c:\Program Files (x86)\National Instruments\CVI2019\toolslib\toolbox\msvc\toolbox.obj
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\user32.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\uuid.lib
+-more:c:\Program Files (x86)\National Instruments\Shared\CVI\Bin\msvc\visa.lib
+-more:C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86\winmm.lib

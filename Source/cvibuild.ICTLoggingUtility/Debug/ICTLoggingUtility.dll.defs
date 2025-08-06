@@ -1,0 +1,5 @@
+LIBRARY ICTLoggingUtility
+
+EXPORTS
+Initialize_ICTLoggingUtility
+ICTLoggingUtility_CheckVersionCompatibility

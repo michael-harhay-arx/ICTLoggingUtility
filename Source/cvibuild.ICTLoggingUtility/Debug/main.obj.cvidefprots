@@ -1,0 +1,5 @@
+[main]
+Class="Function"
+Prototype="int main(int argc, char *argv[]);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\main.c:55:1"
+

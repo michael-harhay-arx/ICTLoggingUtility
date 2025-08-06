@@ -1,0 +1,5 @@
+[MainPanelCB]
+Class="Function"
+Prototype="int MainPanelCB(int panel, int event, void *callbackData, int eventData1, int eventData2);"
+SourceLocation="c:\Arxtron\RD25XXX_ICT\Source\Callbacks.c:65:1"
+
