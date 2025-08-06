@@ -28,6 +28,7 @@
 //#define SYSLOGOVERRIDE 3
 
 #include "Callbacks.h"
+#include <stdlib.h>
 
 #include "SystemLog_LIB.h"
 
@@ -51,7 +52,7 @@ static int glbSysLogLevel = 0;
 //==============================================================================
 // Global variables
 
-char glbRawDataPath[MAX_PATH] = {0};
+char glbLogsPath[MAX_PATH] = {0};
 
 //==============================================================================
 // Global functions
@@ -82,13 +83,13 @@ int CVICALLBACK SelectDataButtonCB (int panel, int control, int event, void *cal
 	if (event == EVENT_LEFT_CLICK)
 	{
 		// Open file selection dialogue
-		int selectionStatus = DirSelectPopupEx ("", "Select a datapath...", glbRawDataPath);
+		int selectionStatus = DirSelectPopupEx ("", "Select a datapath...", glbLogsPath);
 		if (selectionStatus == 0)
 		{
 			return 0;
 		}
 		
-		printf ("Selected path: %s\n", glbRawDataPath);
+		printf ("Selected path: %s\n", glbLogsPath);
 	}
 	
 	return 0;
@@ -130,7 +131,7 @@ int CVICALLBACK GenerateButtonCB (int panel, int control, int event, void *callb
 		printf ("Generate button pressed.\n");
 		
 		// If no datapath selected, generate error
-		if (strcmp (glbRawDataPath, "") == 0)
+		if (strcmp (glbLogsPath, "") == 0)
 		{
 			printf ("Error: no datapath selected");
 			return 0;
@@ -147,6 +148,11 @@ int CVICALLBACK GenerateButtonCB (int panel, int control, int event, void *callb
 			printf ("Error: neither CPK nor GRR view are selected");
 			return 0;
 		}
+		
+		// Parse logs (call python script)
+		char command[256] = {0};
+		sprintf (command, "python C:\\Arxtron\\RD25XXX_ICT\\Source\\ParseLogs.py %s", glbLogsPath);
+		system (command);
 		
 		// Generate HTML
 	}

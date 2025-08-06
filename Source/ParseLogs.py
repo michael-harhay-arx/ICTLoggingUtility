@@ -1,7 +1,7 @@
 import os
 import re
+import sys
 import sqlite3
-import statistics
 
 # ------------- Classes -------------
 
@@ -27,8 +27,8 @@ class Component:
 # ------------- Globals -------------
 
 current_dir = os.getcwd()
-logs_dir = current_dir + "\\Logs"
-db_dir = current_dir + "\\DB"
+logs_dir = sys.argv[1]
+db_dir = current_dir + "..\\DB"
 panels = []
 
 # ------------- Functions -------------
