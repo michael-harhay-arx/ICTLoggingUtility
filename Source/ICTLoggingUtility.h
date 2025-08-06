@@ -15,6 +15,7 @@
 //==============================================================================
 // Include files
 
+#include "windows.h"
 #include "cvidef.h"
 #include "toolbox.h"
 #include <userint.h>

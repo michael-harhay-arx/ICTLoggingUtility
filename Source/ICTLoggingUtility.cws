@@ -30,7 +30,7 @@ Save Changes Before Compiling = "Always"
 Hide Windows = False
 Break At First Statement = False
 Sort Type = "File Name"
-Number of Opened Files = 3
+Number of Opened Files = 4
 Window Confinement Region Enabled = True
 MainColumnWidth = 266
 FileDateColumnWidth = 70
@@ -50,8 +50,9 @@ Path = "/c/Arxtron/RD25XXX_ICT/Source/ICTLoggingUtility.c"
 File Type = "CSource"
 Disk Date = 3837340505
 In Projects = "1,"
-Source Window State = "1,36,36,36,30,30,30,0,0,0,0,0,0,0,0,0,21,0,36,30,400,600,1,0,"
+Source Window State = "1,95,95,95,4,4,4,0,0,0,0,0,0,0,0,0,69,0,95,4,400,600,1,0,"
 Window Top = 31
+Window Z-Order = 4
 
 [File 0002]
 Path = "/c/Arxtron/Libraries/dllmain.c"
@@ -71,9 +72,9 @@ Window Top = 31
 [File 0004]
 Path = "/c/Arxtron/RD25XXX_ICT/Source/ICTLoggingUtility.h"
 File Type = "Include"
-Disk Date = 3837340511
+Disk Date = 3837342174
 In Projects = "1,"
-Source Window State = "1,24,24,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,0,401,714,1,0,"
+Source Window State = "1,18,18,18,19,19,19,0,0,0,0,0,0,0,0,0,0,0,18,19,401,714,1,0,"
 Window Top = 33
 Window Left = 10
 
@@ -109,33 +110,33 @@ In Projects = "1,"
 [File 0009]
 Path = "/c/Arxtron/RD25XXX_ICT/Source/Panel.uir"
 File Type = "User Interface Resource"
-Disk Date = 3837341666
+Disk Date = 3837359413
 In Projects = "1,"
 Window Top = 33
 Window Left = 10
 Window Height = 401
 Window Width = 714
-Window Z-Order = 1
+Window Z-Order = 3
 
 [File 0010]
 Path = "/c/Arxtron/RD25XXX_ICT/Source/Panel.h"
 File Type = "Include"
-Disk Date = 3837341666
+Disk Date = 3837359362
 In Projects = "1,"
-Source Window State = "1,30,30,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,401,630,1,0,"
-Window Top = 126
-Window Left = 58
+Source Window State = "1,21,21,21,9,30,9,0,3,0,0,0,0,0,0,0,0,0,21,30,401,630,1,0,"
+Window Top = 343
+Window Left = 170
 Window Z-Order = 2
 
 [File 0011]
 Path = "/c/Arxtron/RD25XXX_ICT/Source/Callbacks.c"
 File Type = "CSource"
-Disk Date = 3837340546
+Disk Date = 3837359851
 In Projects = "1,"
-Source Window State = "1,52,52,52,0,0,0,0,0,0,0,0,0,0,0,0,23,0,52,0,401,714,1,0,"
+Source Window State = "1,123,123,123,49,49,49,0,0,0,0,0,0,0,0,0,74,0,123,49,401,714,1,0,"
 Window Top = 219
 Window Left = 106
-Window Z-Order = 3
+Window Z-Order = 1
 
 [File 0012]
 Path = "/c/Arxtron/RD25XXX_ICT/Source/Callbacks.h"
@@ -150,6 +151,7 @@ Window Left = 122
 Tab 0001 = "/c/Arxtron/RD25XXX_ICT/Source/Callbacks.c"
 Tab 0002 = "/c/Arxtron/RD25XXX_ICT/Source/Panel.uir"
 Tab 0003 = "/c/Arxtron/RD25XXX_ICT/Source/Panel.h"
+Tab 0004 = "/c/Arxtron/RD25XXX_ICT/Source/ICTLoggingUtility.c"
 
 [Default Build Config 0001 Debug]
 Generate Browse Info = True
